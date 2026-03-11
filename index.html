@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trump Command Center</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+  <style>
+    /* ========================================
+       CSS CUSTOM PROPERTIES
+       ======================================== */
+    :root {
+      --bg-deep: #0b0b0b;
+      --bg-surface: rgba(255, 255, 255, 0.05);
+      --bg-surface-hover: rgba(255, 255, 255, 0.08);
+      --border-subtle: rgba(255, 255, 255, 0.1);
+      --border-hover: rgba(255, 255, 255, 0.18);
+      --text-primary: #ffffff;
+      --text-secondary: #aaaaaa;
+      --text-muted: #888888;
+      --radius-card: 16px;
+      --radius-sm: 10px;
+      --radius-xs: 6px;
+      --blur-glass: 12px;
+      --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+      --transition-fast: 150ms ease;
+      --transition-normal: 250ms ease;
+
+      /* Agent Colors */
+      --agent-email: #3B82F6;
+      --agent-calendar: #22C55E;
+      --agent-crm: #EAB308;
+      --agent-drive: #06B6D4;
+      --agent-marketing: #D946EF;
+      --agent-accounting: #EF4444;
+      --agent-design: #F8FAFC;
+      --agent-visionbleu: #3B82F6;
+      --agent-research: #22C55E;
+      --agent-dev: #06B6D4;
+      --agent-planning: #EAB308;
+      --agent-skillcreator: #A855F7;
+
+      /* Connection status */
+      --status-connected: #22C55E;
+      --status-reconnecting: #EAB308;
+      --status-disconnected: #EF4444;
+    }
+
+    @property --spin-angle {
+      syntax: "<angle>";
+      initial-value: 0deg;
+      inherits: false;
+    }
+
+    /* ========================================
+       RESET & BASE
+       ======================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      color: var(--text-primary);
+      background: var(--bg-deep);
+      overflow-x: hidden;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding-bottom: 80px;
+    }
+
+    /* Dot grid background */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-color: var(--bg-deep);
+      background-image: radial-gradient(#1a1a1a 1px, transparent 1px);
+      background-size: 20px 20px;
+      background-position: center center;
+    }
+
+    /* ========================================
+       CONNECTION STATUS BAR
+       ======================================== */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--status-connected);
+      flex-shrink: 0;
+    }
+
+    .status-dot[data-status="connected"] {
+      background: var(--status-connected);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    .status-dot[data-status="reconnecting"] {
+      background: var(--status-reconnecting);
+      animation: pulse-dot 1s ease-in-out infinite;
+    }
+
+    .status-dot[data-status="disconnected"] {
+      background: var(--status-disconnected);
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 currentColor; }
+      50% { opacity: 0.7; box-shadow: 0 0 8px 2px currentColor; }
+    }
+
+    .status-dot[data-status="connected"] {
+      color: var(--status-connected);
+    }
+
+    .status-dot[data-status="reconnecting"] {
+      color: var(--status-reconnecting);
+    }
+
+    .last-updated {
+      font-size: 11px;
+    }
+
+    /* ========================================
+       HEADER
+       ======================================== */
+    .header {
+      padding: 20px 16px 12px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .header h1 span {
+      color: var(--text-primary);
+    }
+
+    /* ========================================
+       MAIN CONTENT
+       ======================================== */
+    main {
+      padding: 0 12px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ========================================
+       GLASS CARD BASE
+       ======================================== */
+    .glass-card {
+      background: var(--bg-surface);
+      backdrop-filter: blur(var(--blur-glass));
+      -webkit-backdrop-filter: blur(var(--blur-glass));
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      padding: 20px;
+      margin-bottom: 12px;
+      transition: border-color var(--transition-normal);
+    }
+
+    .glass-card:hover {
+      border-color: var(--border-hover);
+    }
+
+    .card-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-label .icon {
+      width: 14px;
+      height: 14px;
+      opacity: 0.6;
+    }
+
+    /* ========================================
+       TOP CARDS GRID
+       ======================================== */
+    .top-cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    /* ========================================
+       SESSION HEALTH CARD — SPINNING BORDER
+       ======================================== */
+    .session-card {
+      position: relative;
+      padding: 0;
+      border: none;
+      background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      box-shadow: none;
+    }
+
+    .session-card-inner {
+      position: relative;
+      z-index: 1;
+      background: rgba(12, 12, 12, 0.95);
+      backdrop-filter: blur(var(--blur-glass));
+      -webkit-backdrop-filter: blur(var(--blur-glass));
+      border-radius: var(--radius-card);
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* Spinning conic-gradient border — only when active */
+    .session-card.active::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: calc(var(--radius-card) + 2px);
+      background: conic-gradient(
+        from var(--spin-angle),
+        #ff4545,
+        #00ff99,
+        #006aff,
+        #ff0095,
+        #ff4545
+      );
+      animation: spin-border 3s linear infinite;
+      z-index: 0;
+    }
+
+    .session-card.active::after {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: calc(var(--radius-card) + 2px);
+      background: conic-gradient(
+        from var(--spin-angle),
+        #ff4545,
+        #00ff99,
+        #006aff,
+        #ff0095,
+        #ff4545
+      );
+      animation: spin-border 3s linear infinite;
+      z-index: -1;
+      filter: blur(16px);
+      opacity: 0.4;
+    }
+
+    @keyframes spin-border {
+      to { --spin-angle: 360deg; }
+    }
+
+    .session-card:not(.active) {
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      backdrop-filter: blur(var(--blur-glass));
+      -webkit-backdrop-filter: blur(var(--blur-glass));
+      box-shadow: var(--shadow-card);
+    }
+
+    .session-card:not(.active) .session-card-inner {
+      background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      border: none;
+    }
+
+    .session-mode {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      margin-bottom: 14px;
+    }
+
+    .session-mode.active {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22C55E;
+    }
+
+    .session-mode .mode-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .session-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-value.small {
+      font-size: 16px;
+    }
+
+    /* Context usage bar */
+    .context-bar-container {
+      margin-top: 16px;
+    }
+
+    .context-bar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+
+    .context-bar-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .context-bar-value {
+      font-size: 13px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .context-bar {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .context-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #006aff, #00ff99);
+      transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
+    }
+
+    .context-bar-fill.warning {
+      background: linear-gradient(90deg, #EAB308, #EF4444);
+    }
+
+    .context-bar-fill.critical {
+      background: linear-gradient(90deg, #EF4444, #ff4545);
+    }
+
+    /* ========================================
+       ACTIVE AGENTS SUMMARY CARD
+       ======================================== */
+    .agents-summary {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .summary-stat {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+    }
+
+    .summary-stat .number {
+      font-size: 28px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .summary-stat .label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .summary-stat .number.running {
+      color: #00ff99;
+    }
+
+    .summary-stat .number.queued {
+      color: var(--agent-planning);
+    }
+
+    .summary-stat .number.completed {
+      color: var(--text-secondary);
+    }
+
+    .summary-divider {
+      width: 1px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* ========================================
+       AGENT LIST
+       ======================================== */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      margin-top: 8px;
+      padding: 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .agent-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .agent-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      backdrop-filter: blur(var(--blur-glass));
+      -webkit-backdrop-filter: blur(var(--blur-glass));
+      transition: border-color var(--transition-normal), background var(--transition-normal);
+      cursor: default;
+    }
+
+    .agent-card:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-surface-hover);
+    }
+
+    .agent-dot-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      margin-top: 1px;
+    }
+
+    .agent-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .agent-dot.running {
+      animation: agent-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes agent-pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.7; }
+    }
+
+    .agent-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .agent-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .agent-emoji {
+      font-size: 14px;
+    }
+
+    .agent-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .agent-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .agent-meta .dot-sep {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      opacity: 0.5;
+    }
+
+    /* ========================================
+       ACTIVITY FEED
+       ======================================== */
+    .activity-feed {
+      max-height: 400px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.1) transparent;
+    }
+
+    .activity-feed::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .activity-feed::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .activity-feed::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 4px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      animation: slide-in 300ms ease-out;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    @keyframes slide-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .activity-time {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+      min-width: 44px;
+    }
+
+    .activity-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    .activity-message {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .activity-message strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .activity-message .event-badge {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-left: 4px;
+    }
+
+    .event-badge.completed {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22C55E;
+    }
+
+    .event-badge.started {
+      background: rgba(59, 130, 246, 0.15);
+      color: #3B82F6;
+    }
+
+    .event-badge.failed {
+      background: rgba(239, 68, 68, 0.15);
+      color: #EF4444;
+    }
+
+    .event-badge.session {
+      background: rgba(168, 85, 247, 0.15);
+      color: #A855F7;
+    }
+
+    /* ========================================
+       EMPTY / OFFLINE STATES
+       ======================================== */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .empty-state .icon {
+      width: 40px;
+      height: 40px;
+      opacity: 0.3;
+      margin-bottom: 12px;
+    }
+
+    .empty-state p {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .offline-banner {
+      display: none;
+      padding: 8px 16px;
+      background: rgba(239, 68, 68, 0.1);
+      border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+      text-align: center;
+      font-size: 12px;
+      color: #EF4444;
+    }
+
+    .offline-banner.visible {
+      display: block;
+    }
+
+    /* ========================================
+       BOTTOM TAB BAR (mobile)
+       ======================================== */
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      padding: 0 20px;
+      padding-bottom: env(safe-area-inset-bottom, 0);
+      background: rgba(18, 18, 18, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .tab-bar-inner {
+      display: flex;
+      width: 100%;
+      max-width: 400px;
+      justify-content: space-around;
+    }
+
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 10px 20px 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: color var(--transition-fast);
+      position: relative;
+      -webkit-tap-highlight-color: transparent;
+      min-width: 44px;
+      min-height: 44px;
+      justify-content: center;
+    }
+
+    .tab-item .icon {
+      width: 22px;
+      height: 22px;
+      transition: transform var(--transition-normal);
+    }
+
+    .tab-item.active {
+      color: var(--text-primary);
+    }
+
+    .tab-item.active::after {
+      content: "";
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 3px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #006aff, #00ff99);
+      box-shadow: 0 0 12px rgba(0, 106, 255, 0.5);
+    }
+
+    .tab-item.active .icon {
+      filter: drop-shadow(0 0 6px rgba(0, 106, 255, 0.5));
+    }
+
+    /* ========================================
+       COMING SOON PAGE
+       ======================================== */
+    .page-history {
+      display: none;
+    }
+
+    .page-history.visible {
+      display: block;
+    }
+
+    .page-home {
+      display: block;
+    }
+
+    .page-home.hidden {
+      display: none;
+    }
+
+    .coming-soon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .coming-soon .icon {
+      width: 48px;
+      height: 48px;
+      opacity: 0.25;
+      margin-bottom: 16px;
+    }
+
+    .coming-soon h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .coming-soon p {
+      font-size: 14px;
+    }
+
+    /* ========================================
+       SKELETON LOADING
+       ======================================== */
+    .skeleton {
+      background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s ease-in-out infinite;
+      border-radius: var(--radius-xs);
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .skeleton-line {
+      height: 14px;
+      margin-bottom: 8px;
+    }
+
+    .skeleton-line.short { width: 60%; }
+    .skeleton-line.medium { width: 80%; }
+    .skeleton-line.long { width: 100%; }
+    .skeleton-number { width: 80px; height: 28px; }
+
+    /* ========================================
+       REDUCED MOTION
+       ======================================== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ========================================
+       RESPONSIVE — DESKTOP
+       ======================================== */
+    @media (min-width: 768px) {
+      main {
+        padding: 0 24px;
+      }
+
+      .top-cards {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .header h1 {
+        font-size: 14px;
+        letter-spacing: 4px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      body {
+        padding-bottom: 24px;
+      }
+
+      main {
+        padding: 0 32px;
+      }
+
+      .tab-bar {
+        display: none;
+      }
+
+      .desktop-nav {
+        display: flex !important;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 24px 32px 16px;
+        text-align: left;
+      }
+
+      .agent-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .activity-feed {
+        max-height: 500px;
+      }
+    }
+
+    /* ========================================
+       DESKTOP NAV
+       ======================================== */
+    .desktop-nav {
+      display: none;
+      gap: 4px;
+    }
+
+    .desktop-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: color var(--transition-fast), background var(--transition-fast);
+      border: none;
+      background: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .desktop-nav-item:hover {
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .desktop-nav-item.active {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .desktop-nav-item .icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ========================================
+       UTILITIES
+       ======================================== */
+    .sr-only {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      overflow: hidden !important;
+      clip: rect(1px, 1px, 1px, 1px) !important;
+      white-space: nowrap !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Offline Banner -->
+  <div class="offline-banner" id="offlineBanner" role="alert">
+    Supabase connection lost. Attempting to reconnect...
+  </div>
+
+  <!-- Connection Status Bar -->
+  <div class="status-bar" role="status" aria-live="polite">
+    <div class="status-indicator">
+      <div class="status-dot" id="statusDot" data-status="disconnected" aria-label="Connection status"></div>
+      <span id="statusText">Connecting...</span>
+    </div>
+    <span class="last-updated" id="lastUpdated"></span>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <h1><span>Trump</span> Command Center</h1>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      <button class="desktop-nav-item active" data-page="home" aria-current="page">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Command Center
+      </button>
+      <button class="desktop-nav-item" data-page="history">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        History
+      </button>
+    </nav>
+  </header>
+
+  <!-- PAGE: Command Center (Home) -->
+  <main class="page-home" id="pageHome">
+
+    <!-- Top Cards Grid -->
+    <div class="top-cards">
+
+      <!-- Session Health Card -->
+      <section class="glass-card session-card" id="sessionCard" aria-label="Session Health">
+        <div class="session-card-inner">
+          <div class="card-label">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            Session Health
+          </div>
+
+          <div class="session-mode" id="sessionMode">
+            <span class="mode-dot"></span>
+            <span id="sessionModeText">--</span>
+          </div>
+
+          <div class="session-stats">
+            <div class="stat-item">
+              <span class="stat-label">Uptime</span>
+              <span class="stat-value small" id="sessionUptime">--</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Cycles</span>
+              <span class="stat-value small" id="sessionCycles">--</span>
+            </div>
+          </div>
+
+          <div class="context-bar-container">
+            <div class="context-bar-header">
+              <span class="context-bar-label">Context</span>
+              <span class="context-bar-value" id="contextValue">-- / --</span>
+            </div>
+            <div class="context-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="contextBarWrapper">
+              <div class="context-bar-fill" id="contextBarFill" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Active Agents Summary Card -->
+      <section class="glass-card" aria-label="Agent Summary">
+        <div class="card-label">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Active Agents
+        </div>
+
+        <div class="agents-summary">
+          <div class="summary-stat">
+            <span class="number running" id="runningCount">0</span>
+            <span class="label">running</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-stat">
+            <span class="number completed" id="completedCount">0</span>
+            <span class="label">completed today</span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Active Agent List -->
+    <div id="agentListSection">
+      <div class="section-label" id="agentListLabel" style="display: none;">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        Running Now
+      </div>
+
+      <div class="agent-list" id="agentList">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Activity Feed -->
+    <section class="glass-card" aria-label="Recent Activity">
+      <div class="card-label">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        Recent Activity
+      </div>
+
+      <div class="activity-feed" id="activityFeed" role="log" aria-live="polite" aria-label="Activity log">
+        <div class="empty-state" id="activityEmpty">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <p>No activity yet.<br>Waiting for Trump to come online.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PAGE: History (Coming Soon) -->
+  <div class="page-history" id="pageHistory">
+    <main>
+      <div class="coming-soon">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <h2>History</h2>
+        <p>Task history and metrics coming in Phase 2.</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Bottom Tab Bar (mobile) -->
+  <nav class="tab-bar" aria-label="Main navigation">
+    <div class="tab-bar-inner">
+      <button class="tab-item active" data-page="home" aria-label="Command Center" aria-current="page">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Command</span>
+      </button>
+      <button class="tab-item" data-page="history" aria-label="History">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>History</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Supabase JS v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    /* ========================================
+       CONFIGURATION
+       ======================================== */
+    const SUPABASE_URL = 'https://izvfrbchqvmaavexrrya.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6dmZyYmNocXZtYWF2ZXhycnlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4Njk3NDgsImV4cCI6MjA4NTQ0NTc0OH0.g1nrcm6tiD_NLZS0IYaGdwU-eCSL6UEj0ZtmdpabSiI';
+
+    const AGENT_COLORS = {
+      email: '#3B82F6',
+      calendar: '#22C55E',
+      crm: '#EAB308',
+      drive: '#06B6D4',
+      marketing: '#D946EF',
+      accounting: '#EF4444',
+      design: '#F8FAFC',
+      visionbleu: '#3B82F6',
+      research: '#22C55E',
+      dev: '#06B6D4',
+      planning: '#EAB308',
+      skillcreator: '#A855F7'
+    };
+
+    const AGENT_EMOJIS = {
+      email: '\u{1F4E7}',
+      calendar: '\u{1F4C5}',
+      crm: '\u{1F91D}',
+      drive: '\u{1F4C1}',
+      marketing: '\u{1F4CA}',
+      accounting: '\u{1F4B0}',
+      design: '\u{1F3A8}',
+      visionbleu: '\u{1F3E2}',
+      research: '\u{1F50D}',
+      dev: '\u{1F4BB}',
+      planning: '\u{1F9E0}',
+      skillcreator: '\u{1F527}'
+    };
+
+    /* ========================================
+       STATE
+       ======================================== */
+    let currentSession = null;
+    let runningAgents = [];
+    let activityItems = [];
+    let completedTodayCount = 0;
+    let connectionStatus = 'disconnected';
+    let supabaseClient = null;
+    let timeUpdateInterval = null;
+
+    /* ========================================
+       DOM REFERENCES
+       ======================================== */
+    const dom = {
+      statusDot: document.getElementById('statusDot'),
+      statusText: document.getElementById('statusText'),
+      lastUpdated: document.getElementById('lastUpdated'),
+      offlineBanner: document.getElementById('offlineBanner'),
+      sessionCard: document.getElementById('sessionCard'),
+      sessionMode: document.getElementById('sessionMode'),
+      sessionModeText: document.getElementById('sessionModeText'),
+      sessionUptime: document.getElementById('sessionUptime'),
+      sessionCycles: document.getElementById('sessionCycles'),
+      contextValue: document.getElementById('contextValue'),
+      contextBarFill: document.getElementById('contextBarFill'),
+      contextBarWrapper: document.getElementById('contextBarWrapper'),
+      runningCount: document.getElementById('runningCount'),
+      completedCount: document.getElementById('completedCount'),
+      agentList: document.getElementById('agentList'),
+      agentListLabel: document.getElementById('agentListLabel'),
+      activityFeed: document.getElementById('activityFeed'),
+      activityEmpty: document.getElementById('activityEmpty'),
+      pageHome: document.getElementById('pageHome'),
+      pageHistory: document.getElementById('pageHistory'),
+    };
+
+    /* ========================================
+       UTILITIES
+       ======================================== */
+    function timeAgo(dateStr) {
+      if (!dateStr) return '--';
+      const now = new Date();
+      const then = new Date(dateStr);
+      const diffMs = now - then;
+      const diffSec = Math.floor(diffMs / 1000);
+      const diffMin = Math.floor(diffSec / 60);
+      const diffHr = Math.floor(diffMin / 60);
+      const diffDay = Math.floor(diffHr / 24);
+
+      if (diffSec < 10) return 'just now';
+      if (diffSec < 60) return `${diffSec}s ago`;
+      if (diffMin < 60) return `${diffMin}m ago`;
+      if (diffHr < 24) return `${diffHr}h ${diffMin % 60}m ago`;
+      return `${diffDay}d ago`;
+    }
+
+    function formatUptime(startedAt) {
+      if (!startedAt) return '--';
+      const now = new Date();
+      const start = new Date(startedAt);
+      const diffMs = now - start;
+      const hours = Math.floor(diffMs / 3600000);
+      const minutes = Math.floor((diffMs % 3600000) / 60000);
+      if (hours > 0) return `${hours}h ${minutes}m`;
+      return `${minutes}m`;
+    }
+
+    function formatContext(used, total) {
+      if (used == null || total == null) return '-- / --';
+      const usedK = Math.round(used / 1000);
+      const totalK = Math.round(total / 1000);
+      return `${usedK}K / ${totalK === 1000 ? '1M' : totalK + 'K'}`;
+    }
+
+    function formatTime(dateStr) {
+      if (!dateStr) return '--';
+      const d = new Date(dateStr);
+      return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    }
+
+    function getAgentColor(agentType) {
+      if (!agentType) return '#888';
+      const normalized = agentType.replace(/-agent$/, '').replace(/_agent$/, '');
+      return AGENT_COLORS[normalized] || '#888';
+    }
+
+    function getAgentEmoji(agentType) {
+      if (!agentType) return '';
+      const normalized = agentType.replace(/-agent$/, '').replace(/_agent$/, '');
+      return AGENT_EMOJIS[normalized] || '';
+    }
+
+    function getAgentDisplayName(agentType) {
+      if (!agentType) return 'Unknown';
+      return agentType.replace(/_/g, '-');
+    }
+
+    /* ========================================
+       CONNECTION STATUS
+       ======================================== */
+    function setConnectionStatus(status) {
+      connectionStatus = status;
+      dom.statusDot.dataset.status = status;
+
+      const labels = {
+        connected: 'Connected',
+        reconnecting: 'Reconnecting...',
+        disconnected: 'Disconnected'
+      };
+      dom.statusText.textContent = labels[status] || status;
+
+      if (status === 'disconnected') {
+        dom.offlineBanner.classList.add('visible');
+      } else {
+        dom.offlineBanner.classList.remove('visible');
+      }
+
+      dom.statusDot.setAttribute('aria-label', `Connection status: ${labels[status]}`);
+    }
+
+    function updateLastUpdated() {
+      dom.lastUpdated.textContent = new Date().toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      });
+    }
+
+    /* ========================================
+       RENDER FUNCTIONS
+       ======================================== */
+    function renderSession(session) {
+      currentSession = session;
+
+      if (!session) {
+        dom.sessionCard.classList.remove('active');
+        dom.sessionModeText.textContent = 'Offline';
+        dom.sessionMode.classList.remove('active');
+        dom.sessionUptime.textContent = '--';
+        dom.sessionCycles.textContent = '--';
+        dom.contextValue.textContent = '-- / --';
+        dom.contextBarFill.style.width = '0%';
+        dom.contextBarWrapper.setAttribute('aria-valuenow', '0');
+        return;
+      }
+
+      const isActive = !session.ended_at;
+      dom.sessionCard.classList.toggle('active', isActive);
+
+      const modeText = session.mode ? session.mode.charAt(0).toUpperCase() + session.mode.slice(1) : 'Unknown';
+      dom.sessionModeText.textContent = modeText;
+      dom.sessionMode.classList.toggle('active', isActive);
+
+      dom.sessionUptime.textContent = formatUptime(session.started_at);
+      dom.sessionCycles.textContent = session.cycles != null ? session.cycles.toLocaleString() : '0';
+
+      const contextText = formatContext(session.context_used, session.context_total);
+      dom.contextValue.textContent = contextText;
+
+      const pct = session.context_total > 0
+        ? Math.min(100, Math.round((session.context_used / session.context_total) * 100))
+        : 0;
+      dom.contextBarFill.style.width = pct + '%';
+      dom.contextBarWrapper.setAttribute('aria-valuenow', pct);
+
+      // Color the bar based on usage
+      dom.contextBarFill.classList.remove('warning', 'critical');
+      if (pct >= 80) {
+        dom.contextBarFill.classList.add('critical');
+      } else if (pct >= 60) {
+        dom.contextBarFill.classList.add('warning');
+      }
+    }
+
+    function renderAgents(agents) {
+      runningAgents = agents;
+      dom.runningCount.textContent = agents.length;
+
+      if (agents.length === 0) {
+        dom.agentListLabel.style.display = 'none';
+        dom.agentList.innerHTML = '';
+        return;
+      }
+
+      dom.agentListLabel.style.display = 'flex';
+
+      dom.agentList.innerHTML = agents.map(agent => {
+        const color = getAgentColor(agent.agent_type);
+        const emoji = getAgentEmoji(agent.agent_type);
+        const name = getAgentDisplayName(agent.agent_type);
+        const elapsed = timeAgo(agent.started_at);
+
+        return `
+          <article class="agent-card" aria-label="${name} agent">
+            <div class="agent-dot-wrapper" style="background: ${hexToRgba(color, 0.1)}">
+              <div class="agent-dot running" style="background: ${color}; box-shadow: 0 0 8px ${hexToRgba(color, 0.5)}"></div>
+            </div>
+            <div class="agent-info">
+              <div class="agent-name">
+                <span class="agent-emoji" aria-hidden="true">${emoji}</span>
+                ${escapeHtml(name)}
+              </div>
+              <div class="agent-desc">${escapeHtml(agent.description || 'No description')}</div>
+              <div class="agent-meta">
+                <span data-started="${agent.started_at}">Started ${elapsed}</span>
+                ${agent.task_id ? `<span class="dot-sep"></span><span>${escapeHtml(agent.task_id)}</span>` : ''}
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderActivity(items) {
+      activityItems = items;
+
+      if (items.length === 0) {
+        dom.activityEmpty.style.display = 'flex';
+        return;
+      }
+
+      dom.activityEmpty.style.display = 'none';
+
+      const feedHtml = items.map(item => {
+        const time = formatTime(item.timestamp);
+        const color = getAgentColor(item.agent_type);
+        const badge = getEventBadge(item.event_type);
+
+        return `
+          <div class="activity-item">
+            <span class="activity-time">${time}</span>
+            <div class="activity-dot" style="background: ${color}"></div>
+            <div class="activity-message">${formatActivityMessage(item)}${badge}</div>
+          </div>
+        `;
+      }).join('');
+
+      // Keep only the feed items, preserve the empty state element
+      const existingEmpty = dom.activityEmpty;
+      dom.activityFeed.innerHTML = feedHtml;
+      dom.activityFeed.appendChild(existingEmpty);
+    }
+
+    function addActivityItem(item) {
+      activityItems.unshift(item);
+      // Keep max 50
+      if (activityItems.length > 50) activityItems.pop();
+
+      dom.activityEmpty.style.display = 'none';
+
+      const time = formatTime(item.timestamp);
+      const color = getAgentColor(item.agent_type);
+      const badge = getEventBadge(item.event_type);
+
+      const div = document.createElement('div');
+      div.className = 'activity-item';
+      div.innerHTML = `
+        <span class="activity-time">${time}</span>
+        <div class="activity-dot" style="background: ${color}"></div>
+        <div class="activity-message">${formatActivityMessage(item)}${badge}</div>
+      `;
+
+      // Insert at top (before the first child, which might be an existing item)
+      const firstItem = dom.activityFeed.querySelector('.activity-item');
+      if (firstItem) {
+        dom.activityFeed.insertBefore(div, firstItem);
+      } else {
+        dom.activityFeed.insertBefore(div, dom.activityEmpty);
+      }
+
+      // Remove excess items from DOM
+      const allItems = dom.activityFeed.querySelectorAll('.activity-item');
+      if (allItems.length > 50) {
+        allItems[allItems.length - 1].remove();
+      }
+    }
+
+    function formatActivityMessage(item) {
+      const agentName = item.agent_type ? `<strong>${getAgentDisplayName(item.agent_type)}</strong>` : '';
+      const message = escapeHtml(item.message || '');
+
+      if (item.event_type === 'agent_completed' && agentName) {
+        return `${agentName} completed ${message ? '"' + message + '"' : ''}`;
+      }
+      if (item.event_type === 'agent_started' && agentName) {
+        return `${agentName} started ${message ? '"' + message + '"' : ''}`;
+      }
+      if (item.event_type === 'agent_failed' && agentName) {
+        return `${agentName} failed ${message ? '- ' + message : ''}`;
+      }
+      if (agentName) {
+        return `${agentName} ${message}`;
+      }
+      return message || item.event_type || 'Unknown event';
+    }
+
+    function getEventBadge(eventType) {
+      if (!eventType) return '';
+      const badges = {
+        agent_completed: '<span class="event-badge completed">done</span>',
+        agent_started: '<span class="event-badge started">new</span>',
+        agent_failed: '<span class="event-badge failed">fail</span>',
+        session_started: '<span class="event-badge session">session</span>',
+        session_ended: '<span class="event-badge session">ended</span>',
+        error: '<span class="event-badge failed">error</span>',
+      };
+      return badges[eventType] || '';
+    }
+
+    function hexToRgba(hex, alpha) {
+      if (!hex || hex === '#888') return `rgba(136, 136, 136, ${alpha})`;
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    /* ========================================
+       TIME-AGO UPDATER
+       ======================================== */
+    function updateTimestamps() {
+      // Update uptime
+      if (currentSession && !currentSession.ended_at) {
+        dom.sessionUptime.textContent = formatUptime(currentSession.started_at);
+      }
+
+      // Update agent elapsed times
+      document.querySelectorAll('.agent-meta [data-started]').forEach(el => {
+        const started = el.dataset.started;
+        if (started) {
+          el.textContent = 'Started ' + timeAgo(started);
+        }
+      });
+    }
+
+    /* ========================================
+       PAGE NAVIGATION
+       ======================================== */
+    function navigateTo(page) {
+      // Toggle pages
+      dom.pageHome.classList.toggle('hidden', page !== 'home');
+      dom.pageHistory.classList.toggle('visible', page === 'history');
+
+      // Update mobile tab bar
+      document.querySelectorAll('.tab-item').forEach(tab => {
+        const isActive = tab.dataset.page === page;
+        tab.classList.toggle('active', isActive);
+        if (isActive) {
+          tab.setAttribute('aria-current', 'page');
+        } else {
+          tab.removeAttribute('aria-current');
+        }
+      });
+
+      // Update desktop nav
+      document.querySelectorAll('.desktop-nav-item').forEach(btn => {
+        const isActive = btn.dataset.page === page;
+        btn.classList.toggle('active', isActive);
+        if (isActive) {
+          btn.setAttribute('aria-current', 'page');
+        } else {
+          btn.removeAttribute('aria-current');
+        }
+      });
+    }
+
+    // Bind tab clicks
+    document.querySelectorAll('.tab-item, .desktop-nav-item').forEach(el => {
+      el.addEventListener('click', () => {
+        navigateTo(el.dataset.page);
+      });
+    });
+
+    /* ========================================
+       SUPABASE INIT & DATA FETCHING
+       ======================================== */
+    async function init() {
+      try {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        setConnectionStatus('reconnecting');
+
+        // Fetch initial state
+        await fetchInitialState();
+
+        // Subscribe to realtime changes
+        subscribeToRealtime();
+
+        setConnectionStatus('connected');
+        updateLastUpdated();
+
+      } catch (err) {
+        console.error('Init failed:', err);
+        setConnectionStatus('disconnected');
+        showOfflineState();
+      }
+
+      // Start the time-ago updater (every 15s)
+      timeUpdateInterval = setInterval(() => {
+        updateTimestamps();
+        updateLastUpdated();
+      }, 15000);
+    }
+
+    async function fetchInitialState() {
+      // 1. Get the most recent active session (ended_at IS NULL)
+      const { data: sessions, error: sessErr } = await supabaseClient
+        .from('trump_sessions')
+        .select('*')
+        .is('ended_at', null)
+        .order('started_at', { ascending: false })
+        .limit(1);
+
+      if (sessErr) {
+        console.error('Sessions fetch error:', sessErr);
+        // Try getting the most recent session regardless of active status
+        const { data: recentSessions } = await supabaseClient
+          .from('trump_sessions')
+          .select('*')
+          .order('started_at', { ascending: false })
+          .limit(1);
+
+        if (recentSessions && recentSessions.length > 0) {
+          renderSession(recentSessions[0]);
+        } else {
+          renderSession(null);
+        }
+      } else if (sessions && sessions.length > 0) {
+        renderSession(sessions[0]);
+      } else {
+        // No active session — try to get most recent ended session
+        const { data: recentSessions } = await supabaseClient
+          .from('trump_sessions')
+          .select('*')
+          .order('started_at', { ascending: false })
+          .limit(1);
+
+        if (recentSessions && recentSessions.length > 0) {
+          renderSession(recentSessions[0]);
+        } else {
+          renderSession(null);
+        }
+      }
+
+      // 2. Get running agents for the active session
+      const sessionId = currentSession?.id;
+      if (sessionId) {
+        const { data: agents, error: agentErr } = await supabaseClient
+          .from('trump_agents')
+          .select('*')
+          .eq('session_id', sessionId)
+          .eq('status', 'running')
+          .order('started_at', { ascending: false });
+
+        if (!agentErr && agents) {
+          renderAgents(agents);
+        }
+      } else {
+        renderAgents([]);
+      }
+
+      // 3. Get recent activity (last 50 items, any session)
+      const activityQuery = supabaseClient
+        .from('trump_activity')
+        .select('*')
+        .order('timestamp', { ascending: false })
+        .limit(50);
+
+      if (sessionId) {
+        activityQuery.eq('session_id', sessionId);
+      }
+
+      const { data: activity, error: actErr } = await activityQuery;
+
+      if (!actErr && activity) {
+        renderActivity(activity);
+      }
+
+      // 4. Count completed agents today
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+
+      const { count, error: countErr } = await supabaseClient
+        .from('trump_agents')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'completed')
+        .gte('completed_at', todayStart.toISOString());
+
+      if (!countErr) {
+        completedTodayCount = count || 0;
+        dom.completedCount.textContent = completedTodayCount;
+      }
+    }
+
+    function subscribeToRealtime() {
+      // Channel for all dashboard tables
+      const channel = supabaseClient
+        .channel('dashboard-realtime')
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'trump_sessions'
+        }, (payload) => {
+          if (currentSession && payload.new.id === currentSession.id) {
+            renderSession(payload.new);
+          } else if (!currentSession) {
+            renderSession(payload.new);
+          }
+          updateLastUpdated();
+        })
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'trump_sessions'
+        }, (payload) => {
+          renderSession(payload.new);
+          updateLastUpdated();
+        })
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'trump_agents'
+        }, (payload) => {
+          if (payload.new.status === 'running') {
+            runningAgents.unshift(payload.new);
+            renderAgents(runningAgents);
+          }
+          updateLastUpdated();
+        })
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'trump_agents'
+        }, (payload) => {
+          const agent = payload.new;
+          if (agent.status !== 'running') {
+            // Remove from running list
+            runningAgents = runningAgents.filter(a => a.id !== agent.id);
+            renderAgents(runningAgents);
+
+            // Increment completed count if completed
+            if (agent.status === 'completed') {
+              completedTodayCount++;
+              dom.completedCount.textContent = completedTodayCount;
+            }
+          } else {
+            // Update running agent info
+            const idx = runningAgents.findIndex(a => a.id === agent.id);
+            if (idx >= 0) {
+              runningAgents[idx] = agent;
+            } else {
+              runningAgents.unshift(agent);
+            }
+            renderAgents(runningAgents);
+          }
+          updateLastUpdated();
+        })
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'trump_activity'
+        }, (payload) => {
+          addActivityItem(payload.new);
+          updateLastUpdated();
+        })
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            setConnectionStatus('connected');
+          } else if (status === 'CHANNEL_ERROR') {
+            setConnectionStatus('reconnecting');
+          } else if (status === 'TIMED_OUT') {
+            setConnectionStatus('disconnected');
+          }
+        });
+    }
+
+    function showOfflineState() {
+      renderSession(null);
+      renderAgents([]);
+      dom.activityEmpty.querySelector('p').innerHTML = 'Unable to connect to Supabase.<br>Check your connection and refresh.';
+    }
+
+    /* ========================================
+       BOOT
+       ======================================== */
+    init();
+  </script>
+</body>
+</html>
