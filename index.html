@@ -785,7 +785,7 @@
     }
 
     /* ========================================
-       COMING SOON PAGE
+       PAGE VISIBILITY
        ======================================== */
     .page-history {
       display: none;
@@ -803,32 +803,404 @@
       display: none;
     }
 
-    .coming-soon {
+    /* ========================================
+       HISTORY PAGE
+       ======================================== */
+    .history-content {
+      padding: 0 12px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* -- Time Range Filter Pills -- */
+    .history-filters {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 12px 0 8px;
+      background: linear-gradient(to bottom, var(--bg-deep) 60%, transparent);
+    }
+
+    .filter-pill {
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      -webkit-tap-highlight-color: transparent;
+      min-height: 34px;
+    }
+
+    .filter-pill:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+    }
+
+    .filter-pill.active {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      border-color: var(--border-subtle);
+    }
+
+    .filter-refresh {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      margin-left: auto;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .filter-refresh:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+    }
+
+    .filter-refresh .icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    .filter-refresh.spinning .icon {
+      animation: spin-refresh 0.8s ease;
+    }
+
+    @keyframes spin-refresh {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* -- Key Metrics Grid -- */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* -- Agent Breakdown Bars -- */
+    .agent-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .agent-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .agent-bar-label {
+      font-size: 12px;
+      font-weight: 600;
+      width: 72px;
+      flex-shrink: 0;
+      text-align: right;
+      text-transform: capitalize;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .agent-bar-track {
+      flex: 1;
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+    }
+
+    .agent-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      min-width: 2px;
+      transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .agent-bar-count {
+      font-size: 12px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-secondary);
+      width: 32px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    .agent-bar-detail {
+      display: none;
+      padding: 8px 0 4px 82px;
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .agent-bar-detail.visible {
+      display: block;
+    }
+
+    /* -- Charts -- */
+    .history-charts {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 0;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 2 / 1;
+      min-height: 160px;
+    }
+
+    .chart-container canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* -- Session History List -- */
+    .session-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .session-row {
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .session-row:last-child {
+      border-bottom: none;
+    }
+
+    .session-row-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+
+    .session-row-date {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .session-row-mode {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+    }
+
+    .session-row-mode.active-session {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22C55E;
+    }
+
+    .session-row-stats {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .session-row-details {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .session-exit-badge {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .session-exit-badge.active-badge {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22C55E;
+    }
+
+    .session-exit-badge.ended-badge {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+    }
+
+    /* -- Search Bar & Filters -- */
+    .history-search-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .history-filter-select {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xs);
+      color: var(--text-primary);
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      outline: none;
+      cursor: pointer;
+      transition: border-color var(--transition-fast);
+      -webkit-appearance: none;
+      appearance: none;
+      min-width: 100px;
+      flex-shrink: 0;
+    }
+
+    .history-filter-select:focus {
+      border-color: var(--border-hover);
+    }
+
+    .history-filter-select option {
+      background: #1a1a1a;
+      color: var(--text-primary);
+    }
+
+    .history-search-input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xs);
+      color: var(--text-primary);
+      padding: 8px 12px;
+      font-size: 13px;
+      width: 100%;
+      outline: none;
+      transition: border-color var(--transition-fast);
+    }
+
+    .history-search-input:focus {
+      border-color: var(--border-hover);
+    }
+
+    .history-search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* -- History Activity Feed (no max-height, uses pagination) -- */
+    .history-activity-feed {
+      max-height: none;
+      overflow: visible;
+    }
+
+    .history-activity-feed .activity-time {
+      min-width: 110px;
+      font-size: 11px;
+    }
+
+    /* -- Load More Button -- */
+    .load-more-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: var(--radius-xs);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .load-more-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      border-color: var(--border-subtle);
+    }
+
+    .load-more-btn.loading {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    .load-more-btn .spinner {
+      display: none;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-top-color: var(--text-secondary);
+      border-radius: 50%;
+      animation: load-spin 0.6s linear infinite;
+      margin-right: 8px;
+    }
+
+    .load-more-btn.loading .spinner {
+      display: block;
+    }
+
+    @keyframes load-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* -- History Empty State -- */
+    .history-empty {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 60vh;
+      padding: 32px 16px;
       text-align: center;
       color: var(--text-muted);
     }
 
-    .coming-soon .icon {
-      width: 48px;
-      height: 48px;
+    .history-empty .icon {
+      width: 32px;
+      height: 32px;
       opacity: 0.25;
-      margin-bottom: 16px;
+      margin-bottom: 10px;
     }
 
-    .coming-soon h2 {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-bottom: 6px;
-    }
-
-    .coming-soon p {
-      font-size: 14px;
+    .history-empty p {
+      font-size: 13px;
+      line-height: 1.5;
     }
 
     /* ========================================
@@ -871,7 +1243,8 @@
        RESPONSIVE — DESKTOP
        ======================================== */
     @media (min-width: 768px) {
-      main {
+      main,
+      .history-content {
         padding: 0 24px;
       }
 
@@ -883,6 +1256,15 @@
         font-size: 14px;
         letter-spacing: 4px;
       }
+
+      /* History — 2-col chart row */
+      .history-charts {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .agent-bar-label {
+        width: 80px;
+      }
     }
 
     @media (min-width: 1024px) {
@@ -890,7 +1272,8 @@
         padding-bottom: 24px;
       }
 
-      main {
+      main,
+      .history-content {
         padding: 0 32px;
       }
 
@@ -918,6 +1301,17 @@
 
       .activity-feed {
         max-height: 500px;
+      }
+
+      /* History — enhanced desktop spacing */
+      .chart-container {
+        aspect-ratio: 2.5 / 1;
+      }
+
+      .history-filters {
+        position: static;
+        background: none;
+        padding: 0 0 8px;
       }
     }
 
@@ -1097,14 +1491,120 @@
 
   </main>
 
-  <!-- PAGE: History (Coming Soon) -->
+  <!-- PAGE: History -->
   <div class="page-history" id="pageHistory">
-    <main>
-      <div class="coming-soon">
-        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <h2>History</h2>
-        <p>Task history and metrics coming in Phase 2.</p>
+    <main class="history-content">
+
+      <!-- Time Range Filters -->
+      <div class="history-filters" id="historyFilters">
+        <button class="filter-pill" data-range="today">Today</button>
+        <button class="filter-pill active" data-range="7d">7d</button>
+        <button class="filter-pill" data-range="30d">30d</button>
+        <button class="filter-pill" data-range="all">All</button>
+        <button class="filter-refresh" id="historyRefresh" aria-label="Refresh history data">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </button>
       </div>
+
+      <!-- Key Metrics -->
+      <section class="glass-card" aria-label="Key Metrics" id="metricsCard">
+        <div class="card-label">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          Key Metrics
+        </div>
+        <div class="metrics-grid" id="metricsGrid">
+          <div class="stat-item">
+            <span class="stat-label">Sessions</span>
+            <span class="stat-value" id="metricSessions"><span class="skeleton skeleton-number">&nbsp;</span></span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Total Uptime</span>
+            <span class="stat-value" id="metricUptime"><span class="skeleton skeleton-number">&nbsp;</span></span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Tasks Done</span>
+            <span class="stat-value" id="metricTasks"><span class="skeleton skeleton-number">&nbsp;</span></span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Success Rate</span>
+            <span class="stat-value" id="metricSuccess"><span class="skeleton skeleton-number">&nbsp;</span></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts Row (stacks on mobile, side-by-side on desktop) -->
+      <div class="history-charts">
+
+        <!-- Agent Breakdown -->
+        <section class="glass-card" aria-label="Agent Breakdown" id="agentBreakdownCard">
+          <div class="card-label">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Agent Breakdown
+          </div>
+          <div class="agent-bars" id="agentBars">
+            <div class="skeleton skeleton-line long"></div>
+            <div class="skeleton skeleton-line medium"></div>
+            <div class="skeleton skeleton-line short"></div>
+          </div>
+        </section>
+
+        <!-- Activity by Hour -->
+        <section class="glass-card" aria-label="Activity by Hour" id="hourlyChartCard">
+          <div class="card-label">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Activity by Hour
+          </div>
+          <div class="chart-container">
+            <canvas id="hourlyChartCanvas"></canvas>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Session History -->
+      <section class="glass-card" aria-label="Session History" id="sessionHistoryCard">
+        <div class="card-label">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>
+          Session History
+        </div>
+        <div class="session-list" id="sessionList">
+          <div class="skeleton skeleton-line long" style="height:40px;margin-bottom:12px"></div>
+          <div class="skeleton skeleton-line long" style="height:40px;margin-bottom:12px"></div>
+          <div class="skeleton skeleton-line medium" style="height:40px"></div>
+        </div>
+        <button class="load-more-btn" id="loadMoreSessions" style="display: none;">
+          <span class="spinner"></span>
+          Load more sessions
+        </button>
+      </section>
+
+      <!-- Activity Log -->
+      <section class="glass-card" aria-label="Activity Log" id="activityLogCard">
+        <div class="card-label">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          Activity Log
+        </div>
+        <div class="history-search-bar">
+          <select class="history-filter-select" id="activityFilter" aria-label="Filter activity type">
+            <option value="all">All events</option>
+            <option value="telegram">Telegram</option>
+            <option value="agents">Agents</option>
+            <option value="system">System</option>
+          </select>
+          <input type="text" class="history-search-input" id="activitySearch"
+                 placeholder="Search activity..." aria-label="Search activity log" />
+        </div>
+        <div class="activity-feed history-activity-feed" id="historyActivityFeed" role="log" aria-label="Historical activity log">
+          <div class="skeleton skeleton-line long"></div>
+          <div class="skeleton skeleton-line medium"></div>
+          <div class="skeleton skeleton-line long"></div>
+        </div>
+        <button class="load-more-btn" id="loadMoreActivity" style="display: none;">
+          <span class="spinner"></span>
+          Load more activity
+        </button>
+      </section>
+
     </main>
   </div>
 
@@ -1121,6 +1621,9 @@
       </button>
     </div>
   </nav>
+
+  <!-- Chart.js v4 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 
   <!-- Supabase JS v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1173,6 +1676,18 @@
     let supabaseClient = null;
     let timeUpdateInterval = null;
 
+    // History tab state
+    let historyLoaded = false;
+    let historyRange = '7d';
+    let sessionHistoryPage = 0;
+    let activityLogPage = 0;
+    let activityLogFilter = 'all';
+    let activityLogSearch = '';
+    let hourlyChartInstance = null;
+    let searchDebounceTimer = null;
+    let allSessionsLoaded = false;
+    let allActivityLoaded = false;
+
     /* ========================================
        DOM REFERENCES
        ======================================== */
@@ -1197,6 +1712,22 @@
       activityEmpty: document.getElementById('activityEmpty'),
       pageHome: document.getElementById('pageHome'),
       pageHistory: document.getElementById('pageHistory'),
+      // History tab elements
+      historyFilters: document.getElementById('historyFilters'),
+      historyRefresh: document.getElementById('historyRefresh'),
+      metricsGrid: document.getElementById('metricsGrid'),
+      metricSessions: document.getElementById('metricSessions'),
+      metricUptime: document.getElementById('metricUptime'),
+      metricTasks: document.getElementById('metricTasks'),
+      metricSuccess: document.getElementById('metricSuccess'),
+      agentBars: document.getElementById('agentBars'),
+      hourlyChartCanvas: document.getElementById('hourlyChartCanvas'),
+      sessionList: document.getElementById('sessionList'),
+      loadMoreSessions: document.getElementById('loadMoreSessions'),
+      activityFilterSelect: document.getElementById('activityFilter'),
+      activitySearchInput: document.getElementById('activitySearch'),
+      historyActivityFeed: document.getElementById('historyActivityFeed'),
+      loadMoreActivity: document.getElementById('loadMoreActivity'),
     };
 
     /* ========================================
@@ -1507,6 +2038,640 @@
     }
 
     /* ========================================
+       HISTORY TAB — UTILITIES
+       ======================================== */
+    function getDateRange(range) {
+      const now = new Date();
+      let from;
+      switch (range) {
+        case 'today':
+          from = new Date(now);
+          from.setHours(0, 0, 0, 0);
+          break;
+        case '7d':
+          from = new Date(now);
+          from.setDate(from.getDate() - 7);
+          break;
+        case '30d':
+          from = new Date(now);
+          from.setDate(from.getDate() - 30);
+          break;
+        case 'all':
+          from = new Date('2020-01-01');
+          break;
+        default:
+          from = new Date(now);
+          from.setDate(from.getDate() - 7);
+      }
+      return { from: from.toISOString(), to: now.toISOString() };
+    }
+
+    function formatDuration(startedAt, endedAt) {
+      if (!startedAt) return '--';
+      const start = new Date(startedAt);
+      const end = endedAt ? new Date(endedAt) : new Date();
+      const diffMs = end - start;
+      if (diffMs < 0) return '--';
+      const hours = Math.floor(diffMs / 3600000);
+      const minutes = Math.floor((diffMs % 3600000) / 60000);
+      if (hours > 0) return `${hours}h ${minutes}m`;
+      return `${minutes}m`;
+    }
+
+    function formatDurationFromMs(ms) {
+      if (!ms || ms <= 0) return '0m';
+      const hours = Math.floor(ms / 3600000);
+      const minutes = Math.floor((ms % 3600000) / 60000);
+      if (hours > 0) return `${hours}h ${minutes}m`;
+      return `${minutes}m`;
+    }
+
+    function formatDateShort(dateStr) {
+      if (!dateStr) return '--';
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    function formatDateTimeFull(dateStr) {
+      if (!dateStr) return '--';
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' +
+             d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    }
+
+    /* ========================================
+       HISTORY TAB — DATA FETCHING
+       ======================================== */
+    async function loadHistory() {
+      const { from } = getDateRange(historyRange);
+      // Reset pagination
+      sessionHistoryPage = 0;
+      activityLogPage = 0;
+      allSessionsLoaded = false;
+      allActivityLoaded = false;
+
+      // Show skeleton states
+      showHistorySkeletons();
+
+      // Fetch all data in parallel
+      await Promise.all([
+        fetchHistoryMetrics(from),
+        fetchAgentBreakdown(from),
+        fetchHourlyActivity(from),
+        fetchSessionHistory(from, 0),
+        fetchActivityLog(from, activityLogFilter, activityLogSearch, 0),
+      ]);
+    }
+
+    function showHistorySkeletons() {
+      dom.metricSessions.innerHTML = '<span class="skeleton skeleton-number">&nbsp;</span>';
+      dom.metricUptime.innerHTML = '<span class="skeleton skeleton-number">&nbsp;</span>';
+      dom.metricTasks.innerHTML = '<span class="skeleton skeleton-number">&nbsp;</span>';
+      dom.metricSuccess.innerHTML = '<span class="skeleton skeleton-number">&nbsp;</span>';
+      dom.agentBars.innerHTML = '<div class="skeleton skeleton-line long"></div><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line short"></div>';
+      dom.sessionList.innerHTML = '<div class="skeleton skeleton-line long" style="height:40px;margin-bottom:12px"></div><div class="skeleton skeleton-line long" style="height:40px;margin-bottom:12px"></div><div class="skeleton skeleton-line medium" style="height:40px"></div>';
+      dom.historyActivityFeed.innerHTML = '<div class="skeleton skeleton-line long"></div><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-line long"></div>';
+      dom.loadMoreSessions.style.display = 'none';
+      dom.loadMoreActivity.style.display = 'none';
+    }
+
+    async function fetchHistoryMetrics(from) {
+      try {
+        // Session count + uptime
+        const { data: sessions, error: sessErr } = await supabaseClient
+          .from('trump_sessions')
+          .select('started_at, ended_at')
+          .gte('started_at', from);
+
+        let sessionCount = 0;
+        let totalUptimeMs = 0;
+        if (!sessErr && sessions) {
+          sessionCount = sessions.length;
+          sessions.forEach(s => {
+            const start = new Date(s.started_at);
+            const end = s.ended_at ? new Date(s.ended_at) : new Date();
+            totalUptimeMs += (end - start);
+          });
+        }
+
+        // Task counts
+        const { count: completedCount, error: compErr } = await supabaseClient
+          .from('trump_agents')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'completed')
+          .gte('started_at', from);
+
+        const { count: failedCount, error: failErr } = await supabaseClient
+          .from('trump_agents')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'failed')
+          .gte('started_at', from);
+
+        const completed = (!compErr && completedCount) ? completedCount : 0;
+        const failed = (!failErr && failedCount) ? failedCount : 0;
+        const total = completed + failed;
+        const successRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        renderMetrics({
+          sessions: sessionCount,
+          uptime: formatDurationFromMs(totalUptimeMs),
+          tasks: completed,
+          successRate: total > 0 ? successRate + '%' : '--'
+        });
+      } catch (err) {
+        console.error('History metrics fetch error:', err);
+        renderMetrics({ sessions: '--', uptime: '--', tasks: '--', successRate: '--' });
+      }
+    }
+
+    async function fetchAgentBreakdown(from) {
+      try {
+        const { data: agents, error } = await supabaseClient
+          .from('trump_agents')
+          .select('agent_type, status, started_at, completed_at')
+          .gte('started_at', from);
+
+        if (error || !agents) {
+          renderAgentBars([]);
+          return;
+        }
+
+        // Group by agent_type
+        const grouped = {};
+        agents.forEach(a => {
+          const type = a.agent_type || 'unknown';
+          if (!grouped[type]) {
+            grouped[type] = { type, count: 0, completed: 0, failed: 0, totalDurationMs: 0, durationCount: 0 };
+          }
+          grouped[type].count++;
+          if (a.status === 'completed') {
+            grouped[type].completed++;
+            if (a.started_at && a.completed_at) {
+              grouped[type].totalDurationMs += (new Date(a.completed_at) - new Date(a.started_at));
+              grouped[type].durationCount++;
+            }
+          }
+          if (a.status === 'failed') grouped[type].failed++;
+        });
+
+        const sorted = Object.values(grouped).sort((a, b) => b.count - a.count);
+        renderAgentBars(sorted);
+      } catch (err) {
+        console.error('Agent breakdown fetch error:', err);
+        renderAgentBars([]);
+      }
+    }
+
+    async function fetchHourlyActivity(from) {
+      try {
+        const { data: activity, error } = await supabaseClient
+          .from('trump_activity')
+          .select('timestamp')
+          .gte('timestamp', from);
+
+        if (error || !activity) {
+          renderHourlyChart([]);
+          return;
+        }
+
+        // Count by hour
+        const hourCounts = new Array(24).fill(0);
+        activity.forEach(a => {
+          const hour = new Date(a.timestamp).getHours();
+          hourCounts[hour]++;
+        });
+
+        renderHourlyChart(hourCounts);
+      } catch (err) {
+        console.error('Hourly activity fetch error:', err);
+        renderHourlyChart([]);
+      }
+    }
+
+    async function fetchSessionHistory(from, page) {
+      try {
+        const pageSize = 10;
+        const offset = page * pageSize;
+
+        const { data: sessions, error: sessErr } = await supabaseClient
+          .from('trump_sessions')
+          .select('*')
+          .gte('started_at', from)
+          .order('started_at', { ascending: false })
+          .range(offset, offset + pageSize - 1);
+
+        if (sessErr || !sessions) {
+          if (page === 0) renderSessionHistory([], false);
+          return;
+        }
+
+        // Get agent counts for these sessions
+        let agentCounts = {};
+        if (sessions.length > 0) {
+          const sessionIds = sessions.map(s => s.id);
+          const { data: agents, error: agErr } = await supabaseClient
+            .from('trump_agents')
+            .select('session_id, status')
+            .in('session_id', sessionIds);
+
+          if (!agErr && agents) {
+            agents.forEach(a => {
+              if (!agentCounts[a.session_id]) agentCounts[a.session_id] = { total: 0, completed: 0 };
+              agentCounts[a.session_id].total++;
+              if (a.status === 'completed') agentCounts[a.session_id].completed++;
+            });
+          }
+        }
+
+        // Merge task counts into sessions
+        const enriched = sessions.map(s => ({
+          ...s,
+          taskCount: agentCounts[s.id] ? agentCounts[s.id].total : 0,
+          completedCount: agentCounts[s.id] ? agentCounts[s.id].completed : 0,
+        }));
+
+        const append = page > 0;
+        renderSessionHistory(enriched, append);
+
+        // Show/hide load more
+        if (sessions.length < pageSize) {
+          allSessionsLoaded = true;
+          dom.loadMoreSessions.style.display = 'none';
+        } else {
+          dom.loadMoreSessions.style.display = 'flex';
+        }
+      } catch (err) {
+        console.error('Session history fetch error:', err);
+        if (page === 0) renderSessionHistory([], false);
+      }
+    }
+
+    async function fetchActivityLog(from, filter, search, page) {
+      try {
+        const pageSize = 30;
+        const offset = page * pageSize;
+
+        let query = supabaseClient
+          .from('trump_activity')
+          .select('*')
+          .gte('timestamp', from)
+          .order('timestamp', { ascending: false })
+          .range(offset, offset + pageSize - 1);
+
+        // Apply filter
+        if (filter === 'telegram') {
+          query = query.in('event_type', ['telegram_received', 'telegram_sent']);
+        } else if (filter === 'agents') {
+          query = query.in('event_type', ['agent_dispatched', 'agent_started', 'agent_completed', 'agent_failed']);
+        } else if (filter === 'system') {
+          query = query.in('event_type', ['heartbeat', 'system', 'error', 'session_started', 'session_ended']);
+        }
+
+        // Apply search
+        if (search) {
+          query = query.ilike('message', `%${search}%`);
+        }
+
+        const { data: items, error } = await query;
+
+        if (error || !items) {
+          if (page === 0) renderActivityLog([], false);
+          return;
+        }
+
+        const append = page > 0;
+        renderActivityLog(items, append);
+
+        // Show/hide load more
+        if (items.length < pageSize) {
+          allActivityLoaded = true;
+          dom.loadMoreActivity.style.display = 'none';
+        } else {
+          dom.loadMoreActivity.style.display = 'flex';
+        }
+      } catch (err) {
+        console.error('Activity log fetch error:', err);
+        if (page === 0) renderActivityLog([], false);
+      }
+    }
+
+    /* ========================================
+       HISTORY TAB — RENDER FUNCTIONS
+       ======================================== */
+    function renderMetrics(data) {
+      dom.metricSessions.textContent = data.sessions;
+      dom.metricUptime.textContent = data.uptime;
+      dom.metricTasks.textContent = data.tasks;
+      dom.metricSuccess.textContent = data.successRate;
+    }
+
+    function renderAgentBars(data) {
+      if (!data || data.length === 0) {
+        dom.agentBars.innerHTML = `
+          <div class="history-empty">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            <p>No agent data for this period.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const maxCount = data[0].count;
+
+      dom.agentBars.innerHTML = data.map(agent => {
+        const normalized = agent.type.replace(/-agent$/, '').replace(/_agent$/, '');
+        const color = AGENT_COLORS[normalized] || '#888';
+        const pct = maxCount > 0 ? Math.max(2, Math.round((agent.count / maxCount) * 100)) : 0;
+        const avgDuration = agent.durationCount > 0 ? formatDurationFromMs(agent.totalDurationMs / agent.durationCount) : '--';
+        const successRate = (agent.completed + agent.failed) > 0
+          ? Math.round((agent.completed / (agent.completed + agent.failed)) * 100) + '%'
+          : '--';
+        const displayName = normalized.charAt(0).toUpperCase() + normalized.slice(1);
+
+        return `
+          <div>
+            <div class="agent-bar-row" data-agent="${escapeHtml(normalized)}" role="button" tabindex="0" aria-label="${displayName}: ${agent.count} tasks">
+              <span class="agent-bar-label" style="color: ${color}">${displayName}</span>
+              <div class="agent-bar-track">
+                <div class="agent-bar-fill" style="width: ${pct}%; background: ${color}"></div>
+              </div>
+              <span class="agent-bar-count">${agent.count}</span>
+            </div>
+            <div class="agent-bar-detail" id="detail-${escapeHtml(normalized)}">
+              Completed: ${agent.completed} &bull; Failed: ${agent.failed} &bull; Avg: ${avgDuration} &bull; Success: ${successRate}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Add click handlers for detail expand
+      dom.agentBars.querySelectorAll('.agent-bar-row').forEach(row => {
+        row.addEventListener('click', () => {
+          const agent = row.dataset.agent;
+          const detail = document.getElementById('detail-' + agent);
+          if (detail) detail.classList.toggle('visible');
+        });
+        row.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            row.click();
+          }
+        });
+      });
+    }
+
+    function renderHourlyChart(hourCounts) {
+      // Destroy existing chart
+      if (hourlyChartInstance) {
+        hourlyChartInstance.destroy();
+        hourlyChartInstance = null;
+      }
+
+      if (!hourCounts || hourCounts.every(c => c === 0)) {
+        // Show empty state on canvas parent
+        dom.hourlyChartCanvas.parentElement.innerHTML = `
+          <div class="history-empty" style="min-height:140px">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <p>No activity for this period.</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Ensure canvas exists (may have been replaced by empty state)
+      const container = document.querySelector('#hourlyChartCard .chart-container');
+      if (!container.querySelector('canvas')) {
+        container.innerHTML = '<canvas id="hourlyChartCanvas"></canvas>';
+        dom.hourlyChartCanvas = document.getElementById('hourlyChartCanvas');
+      }
+
+      const ctx = dom.hourlyChartCanvas.getContext('2d');
+
+      // Create gradient
+      const gradient = ctx.createLinearGradient(0, 0, dom.hourlyChartCanvas.width, 0);
+      gradient.addColorStop(0, 'rgba(0, 106, 255, 0.7)');
+      gradient.addColorStop(1, 'rgba(0, 255, 153, 0.7)');
+
+      hourlyChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Array.from({ length: 24 }, (_, i) => {
+            if (i % 3 === 0) return `${i}:00`;
+            return '';
+          }),
+          datasets: [{
+            data: hourCounts,
+            backgroundColor: gradient,
+            borderColor: 'rgba(0, 106, 255, 0.3)',
+            borderWidth: 1,
+            borderRadius: 3,
+            borderSkipped: false,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(20, 20, 20, 0.95)',
+              borderColor: 'rgba(255, 255, 255, 0.1)',
+              borderWidth: 1,
+              titleColor: '#fff',
+              bodyColor: '#aaa',
+              cornerRadius: 8,
+              padding: 10,
+              callbacks: {
+                title: (items) => {
+                  const hour = items[0].dataIndex;
+                  return `${hour}:00 - ${hour}:59`;
+                },
+                label: (item) => `${item.raw} events`
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              border: { display: false },
+              ticks: {
+                color: '#888',
+                font: { size: 10 },
+                maxRotation: 0,
+              }
+            },
+            y: {
+              grid: { color: 'rgba(255, 255, 255, 0.04)' },
+              border: { display: false },
+              ticks: {
+                color: '#888',
+                font: { size: 10 },
+                stepSize: 1,
+                padding: 8,
+              },
+              beginAtZero: true,
+            }
+          }
+        }
+      });
+    }
+
+    function renderSessionHistory(sessions, append) {
+      if (!sessions || sessions.length === 0) {
+        if (!append) {
+          dom.sessionList.innerHTML = `
+            <div class="history-empty">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/></svg>
+              <p>No sessions recorded for this period.</p>
+            </div>
+          `;
+        }
+        return;
+      }
+
+      const html = sessions.map(s => {
+        const isActive = !s.ended_at;
+        const date = formatDateShort(s.started_at);
+        const mode = s.mode || 'unknown';
+        const duration = formatDuration(s.started_at, s.ended_at);
+        const tasks = s.taskCount || 0;
+        const exitReason = s.exit_reason || '';
+
+        const modeBadgeClass = isActive ? 'session-row-mode active-session' : 'session-row-mode';
+        const exitBadge = isActive
+          ? '<span class="session-exit-badge active-badge">Active</span>'
+          : (exitReason
+              ? `<span class="session-exit-badge ended-badge">${escapeHtml(exitReason)}</span>`
+              : '<span class="session-exit-badge ended-badge">ended</span>');
+
+        return `
+          <div class="session-row">
+            <div class="session-row-header">
+              <span class="session-row-date">${date}</span>
+              <span class="${modeBadgeClass}">${escapeHtml(mode)}</span>
+              <div class="session-row-stats">
+                <span>${duration}</span>
+                <span>${tasks} task${tasks !== 1 ? 's' : ''}</span>
+              </div>
+            </div>
+            <div class="session-row-details">
+              ${exitBadge}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (append) {
+        dom.sessionList.insertAdjacentHTML('beforeend', html);
+      } else {
+        dom.sessionList.innerHTML = html;
+      }
+    }
+
+    function renderActivityLog(items, append) {
+      if (!items || items.length === 0) {
+        if (!append) {
+          dom.historyActivityFeed.innerHTML = `
+            <div class="history-empty">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <p>No activity found for this period.</p>
+            </div>
+          `;
+        }
+        return;
+      }
+
+      const html = items.map(item => {
+        const time = formatDateTimeFull(item.timestamp);
+        const color = getAgentColor(item.agent_type);
+        const badge = getEventBadge(item.event_type);
+
+        return `
+          <div class="activity-item">
+            <span class="activity-time">${time}</span>
+            <div class="activity-dot" style="background: ${color}"></div>
+            <div class="activity-message">${formatActivityMessage(item)}${badge}</div>
+          </div>
+        `;
+      }).join('');
+
+      if (append) {
+        dom.historyActivityFeed.insertAdjacentHTML('beforeend', html);
+      } else {
+        dom.historyActivityFeed.innerHTML = html;
+      }
+    }
+
+    /* ========================================
+       HISTORY TAB — EVENT BINDINGS
+       ======================================== */
+    function initHistoryBindings() {
+      // Filter pills
+      dom.historyFilters.addEventListener('click', (e) => {
+        const pill = e.target.closest('.filter-pill');
+        if (!pill) return;
+        historyRange = pill.dataset.range;
+        dom.historyFilters.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        sessionHistoryPage = 0;
+        activityLogPage = 0;
+        loadHistory();
+      });
+
+      // Refresh button
+      dom.historyRefresh.addEventListener('click', () => {
+        dom.historyRefresh.classList.add('spinning');
+        loadHistory().then(() => {
+          setTimeout(() => dom.historyRefresh.classList.remove('spinning'), 800);
+        });
+      });
+
+      // Activity filter dropdown
+      dom.activityFilterSelect.addEventListener('change', () => {
+        activityLogFilter = dom.activityFilterSelect.value;
+        activityLogPage = 0;
+        allActivityLoaded = false;
+        dom.historyActivityFeed.innerHTML = '<div class="skeleton skeleton-line long"></div><div class="skeleton skeleton-line medium"></div>';
+        fetchActivityLog(getDateRange(historyRange).from, activityLogFilter, activityLogSearch, 0);
+      });
+
+      // Activity search (debounced)
+      dom.activitySearchInput.addEventListener('input', () => {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(() => {
+          activityLogSearch = dom.activitySearchInput.value.trim();
+          activityLogPage = 0;
+          allActivityLoaded = false;
+          dom.historyActivityFeed.innerHTML = '<div class="skeleton skeleton-line long"></div><div class="skeleton skeleton-line medium"></div>';
+          fetchActivityLog(getDateRange(historyRange).from, activityLogFilter, activityLogSearch, 0);
+        }, 300);
+      });
+
+      // Load more sessions
+      dom.loadMoreSessions.addEventListener('click', () => {
+        if (allSessionsLoaded) return;
+        dom.loadMoreSessions.classList.add('loading');
+        sessionHistoryPage++;
+        fetchSessionHistory(getDateRange(historyRange).from, sessionHistoryPage).then(() => {
+          dom.loadMoreSessions.classList.remove('loading');
+        });
+      });
+
+      // Load more activity
+      dom.loadMoreActivity.addEventListener('click', () => {
+        if (allActivityLoaded) return;
+        dom.loadMoreActivity.classList.add('loading');
+        activityLogPage++;
+        fetchActivityLog(getDateRange(historyRange).from, activityLogFilter, activityLogSearch, activityLogPage).then(() => {
+          dom.loadMoreActivity.classList.remove('loading');
+        });
+      });
+    }
+
+    // Initialize history bindings once DOM is ready
+    initHistoryBindings();
+
+    /* ========================================
        PAGE NAVIGATION
        ======================================== */
     function navigateTo(page) {
@@ -1535,6 +2700,12 @@
           btn.removeAttribute('aria-current');
         }
       });
+
+      // Lazy load history data on first visit
+      if (page === 'history' && !historyLoaded && supabaseClient) {
+        historyLoaded = true;
+        loadHistory();
+      }
     }
 
     // Bind tab clicks
